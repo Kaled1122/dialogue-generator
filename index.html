@@ -78,7 +78,7 @@
     <input type="text" id="synWord1">
     <label>Word 2:</label>
     <input type="text" id="synWord2">
-    <button onclick="generateDialogue('synonyms')">Generate Dialogue</button>
+    <button onclick="generateDialogue('1')">Generate Dialogue</button>
     <div id="synOutput" class="output"></div>
   </div>
 
@@ -89,7 +89,7 @@
     <input type="text" id="oppWord1">
     <label>Word 2:</label>
     <input type="text" id="oppWord2">
-    <button onclick="generateDialogue('opposites')">Generate Dialogue</button>
+    <button onclick="generateDialogue('2')">Generate Dialogue</button>
     <div id="oppOutput" class="output"></div>
   </div>
 
@@ -100,7 +100,7 @@
     <input type="text" id="defWord">
     <label>Definition:</label>
     <input type="text" id="defDefinition">
-    <button onclick="generateDialogue('definitions')">Generate Dialogue</button>
+    <button onclick="generateDialogue('3')">Generate Dialogue</button>
     <div id="defOutput" class="output"></div>
   </div>
 
@@ -111,68 +111,66 @@
     <input type="text" id="themeName">
     <label>Target Word:</label>
     <input type="text" id="themeWord">
-    <button onclick="generateDialogue('themes')">Generate Dialogue</button>
+    <button onclick="generateDialogue('4')">Generate Dialogue</button>
     <div id="themeOutput" class="output"></div>
   </div>
 
+  <!-- Grammar -->
+  <div class="card">
+    <h2>Grammar</h2>
+    <label>Grammar Rule:</label>
+    <input type="text" id="grammarRule">
+    <button onclick="generateDialogue('5')">Generate Dialogue</button>
+    <div id="grammarOutput" class="output"></div>
+  </div>
+
   <script>
-    // ✅ Change only this once after deploying backend to Render
     const API_URL = "https://dialogue-generator-pcvy.onrender.com/api/generate";
 
     async function generateDialogue(type) {
-      let inputHeader = "";
-      let inputText = "";
+      let payload = { promptType: type };
 
-      if (type === "synonyms") {
-        const w1 = document.getElementById("synWord1").value;
-        const w2 = document.getElementById("synWord2").value;
-        inputHeader = `[SYNONYMS]\nWord 1: ${w1} / Word 2: ${w2}`;
-        inputText = `Generate a dialogue using the synonyms: ${w1} and ${w2}.`;
-      } 
-      else if (type === "opposites") {
-        const w1 = document.getElementById("oppWord1").value;
-        const w2 = document.getElementById("oppWord2").value;
-        inputHeader = `[OPPOSITES]\nWord 1: ${w1} / Word 2: ${w2}`;
-        inputText = `Generate a dialogue using the opposites: ${w1} and ${w2}.`;
-      } 
-      else if (type === "definitions") {
-        const word = document.getElementById("defWord").value;
-        const def = document.getElementById("defDefinition").value;
-        inputHeader = `[DEFINITIONS]\nWord: ${word} → "${def}"`;
-        inputText = `Generate a dialogue using the word: ${word}, with the definition "${def}".`;
-      } 
-      else if (type === "themes") {
-        const theme = document.getElementById("themeName").value;
-        const word = document.getElementById("themeWord").value;
-        inputHeader = `[THEMES]\nTheme: ${theme} | Word: ${word}`;
-        inputText = `Generate a dialogue for the theme "${theme}" using the word "${word}".`;
+      if (type === "1") {
+        payload.word1 = document.getElementById("synWord1").value;
+        payload.word2 = document.getElementById("synWord2").value;
+      } else if (type === "2") {
+        payload.word1 = document.getElementById("oppWord1").value;
+        payload.word2 = document.getElementById("oppWord2").value;
+      } else if (type === "3") {
+        payload.word1 = document.getElementById("defWord").value;
+        payload.definition = document.getElementById("defDefinition").value;
+      } else if (type === "4") {
+        payload.word1 = document.getElementById("themeName").value;
+        payload.word2 = document.getElementById("themeWord").value;
+      } else if (type === "5") {
+        payload.grammar = document.getElementById("grammarRule").value;
       }
 
-      const fullPrompt = `${inputHeader}\n${inputText}`;
-
       try {
-        const response = await fetch(API_URL, {
+        const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: fullPrompt })
+          body: JSON.stringify(payload),
         });
 
-        const data = await response.json();
-        const text = data.output || "❌ No response from server";
+        const data = await res.json();
+        const text = data.output || ("❌ Error: " + (data.error || "No response"));
 
-        if (type === "synonyms") document.getElementById("synOutput").textContent = text;
-        if (type === "opposites") document.getElementById("oppOutput").textContent = text;
-        if (type === "definitions") document.getElementById("defOutput").textContent = text;
-        if (type === "themes") document.getElementById("themeOutput").textContent = text;
+        if (type === "1") document.getElementById("synOutput").textContent = text;
+        if (type === "2") document.getElementById("oppOutput").textContent = text;
+        if (type === "3") document.getElementById("defOutput").textContent = text;
+        if (type === "4") document.getElementById("themeOutput").textContent = text;
+        if (type === "5") document.getElementById("grammarOutput").textContent = text;
 
       } catch (err) {
-        if (type === "synonyms") document.getElementById("synOutput").textContent = "❌ Error: " + err.message;
-        if (type === "opposites") document.getElementById("oppOutput").textContent = "❌ Error: " + err.message;
-        if (type === "definitions") document.getElementById("defOutput").textContent = "❌ Error: " + err.message;
-        if (type === "themes") document.getElementById("themeOutput").textContent = "❌ Error: " + err.message;
+        const errorText = "❌ Fetch error: " + err.message;
+        if (type === "1") document.getElementById("synOutput").textContent = errorText;
+        if (type === "2") document.getElementById("oppOutput").textContent = errorText;
+        if (type === "3") document.getElementById("defOutput").textContent = errorText;
+        if (type === "4") document.getElementById("themeOutput").textContent = errorText;
+        if (type === "5") document.getElementById("grammarOutput").textContent = errorText;
       }
     }
   </script>
 </body>
 </html>
-
