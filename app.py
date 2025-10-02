@@ -7,7 +7,12 @@ CORS(app)
 
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
-# ---- System instructions (reusable prompt rules) ----
+# ---- Test route ----
+@app.route("/", methods=["GET"])
+def home():
+    return "✅ Backend is running"
+
+# ---- System instructions ----
 system_prompt = """
 You are an AI that generates short, clear educational dialogues for an e-learning course. 
 The course has five segments: SYNONYMS, OPPOSITES, DEFINITIONS, THEMES, and GRAMMAR.
@@ -67,7 +72,7 @@ def generate():
             "https://api.openai.com/v1/chat/completions",
             headers={"Authorization": f"Bearer {OPENAI_API_KEY}", "Content-Type": "application/json"},
             json={
-                "model": "gpt-4o-mini",  # cheaper model
+                "model": "gpt-4o-mini",  # or gpt-5 if you want
                 "messages": [
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
@@ -76,10 +81,14 @@ def generate():
         )
 
         result = response.json()
+        if "error" in result:
+            return jsonify({"error": result["error"]["message"], "details": result}), 400
+
         return jsonify({"output": result["choices"][0]["message"]["content"]})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 3000)))
