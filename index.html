@@ -115,63 +115,70 @@
     <div id="themeOutput" class="output"></div>
   </div>
 
-  <script>
-    // ✅ Change only this once after deploying backend to Render
-    const API_URL = "https://your-backend.onrender.com/api/generate";
+<script>
+  const API_URL = "https://dialogue-generator-pcvy.onrender.com/api/generate";
 
-    async function generateDialogue(type) {
-      let inputHeader = "";
-      let inputText = "";
+  async function generateDialogue(type) {
+    let payload = {};
 
-      if (type === "synonyms") {
-        const w1 = document.getElementById("synWord1").value;
-        const w2 = document.getElementById("synWord2").value;
-        inputHeader = `[SYNONYMS]\nWord 1: ${w1} / Word 2: ${w2}`;
-        inputText = `Generate a dialogue using the synonyms: ${w1} and ${w2}.`;
-      } 
-      else if (type === "opposites") {
-        const w1 = document.getElementById("oppWord1").value;
-        const w2 = document.getElementById("oppWord2").value;
-        inputHeader = `[OPPOSITES]\nWord 1: ${w1} / Word 2: ${w2}`;
-        inputText = `Generate a dialogue using the opposites: ${w1} and ${w2}.`;
-      } 
-      else if (type === "definitions") {
-        const word = document.getElementById("defWord").value;
-        const def = document.getElementById("defDefinition").value;
-        inputHeader = `[DEFINITIONS]\nWord: ${word} → "${def}"`;
-        inputText = `Generate a dialogue using the word: ${word}, with the definition "${def}".`;
-      } 
-      else if (type === "themes") {
-        const theme = document.getElementById("themeName").value;
-        const word = document.getElementById("themeWord").value;
-        inputHeader = `[THEMES]\nTheme: ${theme} | Word: ${word}`;
-        inputText = `Generate a dialogue for the theme "${theme}" using the word "${word}".`;
-      }
-
-      const fullPrompt = `${inputHeader}\n${inputText}`;
-
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: fullPrompt })
-        });
-
-        const data = await response.json();
-        const text = data.output || "❌ No response from server";
-
-        if (type === "synonyms") document.getElementById("synOutput").textContent = text;
-        if (type === "opposites") document.getElementById("oppOutput").textContent = text;
-        if (type === "definitions") document.getElementById("defOutput").textContent = text;
-        if (type === "themes") document.getElementById("themeOutput").textContent = text;
-
-      } catch (err) {
-        if (type === "synonyms") document.getElementById("synOutput").textContent = "❌ Error: " + err.message;
-        if (type === "opposites") document.getElementById("oppOutput").textContent = "❌ Error: " + err.message;
-        if (type === "definitions") document.getElementById("defOutput").textContent = "❌ Error: " + err.message;
-        if (type === "themes") document.getElementById("themeOutput").textContent = "❌ Error: " + err.message;
-      }
+    if (type === "synonyms") {
+      payload = {
+        promptType: "1",
+        word1: document.getElementById("synWord1").value,
+        word2: document.getElementById("synWord2").value
+      };
+    } 
+    else if (type === "opposites") {
+      payload = {
+        promptType: "2",
+        word1: document.getElementById("oppWord1").value,
+        word2: document.getElementById("oppWord2").value
+      };
+    } 
+    else if (type === "definitions") {
+      payload = {
+        promptType: "3",
+        word1: document.getElementById("defWord").value,
+        definition: document.getElementById("defDefinition").value
+      };
+    } 
+    else if (type === "themes") {
+      payload = {
+        promptType: "4",
+        word1: document.getElementById("themeName").value,
+        word2: document.getElementById("themeWord").value
+      };
     }
-  </script>
+
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Server returned ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
+      const text = data.output || "❌ No response from server";
+
+      if (type === "synonyms") document.getElementById("synOutput").textContent = text;
+      if (type === "opposites") document.getElementById("oppOutput").textContent = text;
+      if (type === "definitions") document.getElementById("defOutput").textContent = text;
+      if (type === "themes") document.getElementById("themeOutput").textContent = text;
+
+    } catch (err) {
+      const msg = "❌ Error: " + err.message;
+      if (type === "synonyms") document.getElementById("synOutput").textContent = msg;
+      if (type === "opposites") document.getElementById("oppOutput").textContent = msg;
+      if (type === "definitions") document.getElementById("defOutput").textContent = msg;
+      if (type === "themes") document.getElementById("themeOutput").textContent = msg;
+    }
+  }
+</script>
 </body>
 </html>
+
