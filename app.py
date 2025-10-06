@@ -17,6 +17,8 @@ system_prompt = """
 You are an AI that writes short, clear educational dialogues for an e-learning course.
 The course has five segments: Synonyms, Opposites, Definitions, Themes, and Grammar.
 
+Follow these exact rules:
+
 1. Dialogue Rules
 - Write a 4-turn conversation between two male speakers (use names like James, David, Ethan, Liam, Tom, Noah, or Adam).
 - Keep the tone formal but friendly. Avoid slang and very casual words.
@@ -35,14 +37,17 @@ The course has five segments: Synonyms, Opposites, Definitions, Themes, and Gram
 - Grammar: Use the given grammar rule in the dialogue and show how it works.
 
 4. Output Format
+Write the response in plain text only. No bold, italics, or markdown symbols.
+Follow this format exactly:
+
 Segment: [Segment Name]
 Target Words or Rule: [word1] / [word2]
 
 Dialogue:
-Speaker 1: …
-Speaker 2: …
-Speaker 1: …
-Speaker 2: …
+Speaker 1: ...
+Speaker 2: ...
+Speaker 1: ...
+Speaker 2: ...
 
 Language Note:
 [Simple explanation]
@@ -97,4 +102,5 @@ def generate():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 3000)))
+
 
