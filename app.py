@@ -26,7 +26,6 @@ Follow these exact rules:
 
 2. Language Note
 - After each dialogue, write a short Language Note.
-- Keep it under three short sentences.
 - Explain the target word(s) or grammar rule in a clear and simple way.
 - Use language that is easy for B1–C1 English learners to understand.
 
