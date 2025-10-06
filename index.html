@@ -15,170 +15,176 @@
     h1 {
       text-align: center;
       font-size: 28px;
+      font-weight: 600;
       margin-bottom: 40px;
+      color: #1d1d1f;
     }
     .card {
       background: #fff;
-      border-radius: 20px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      padding: 24px;
-      margin-bottom: 30px;
+      border-radius: 24px;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.08);
+      padding: 32px;
       max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
+      margin: 0 auto;
+      transition: all 0.3s ease;
     }
-    .card h2 {
-      font-size: 20px;
-      margin-bottom: 15px;
-      color: #0071e3;
-    }
-    .card label {
+    label {
       display: block;
-      font-size: 14px;
+      font-size: 15px;
+      font-weight: 500;
       margin-top: 10px;
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
-    .card input {
+    select, input {
       width: 100%;
-      padding: 10px;
+      padding: 12px;
       border: 1px solid #d2d2d7;
-      border-radius: 10px;
-      font-size: 14px;
-      margin-bottom: 10px;
+      border-radius: 12px;
+      font-size: 15px;
+      background-color: #fbfbfd;
+      margin-bottom: 14px;
+      transition: border 0.2s ease;
     }
-    .card button {
+    select:focus, input:focus {
+      outline: none;
+      border-color: #0071e3;
+    }
+    button {
       background: #0071e3;
       color: white;
       border: none;
-      padding: 12px 20px;
-      border-radius: 12px;
+      padding: 14px 20px;
+      border-radius: 14px;
       cursor: pointer;
-      font-size: 15px;
+      font-size: 16px;
+      font-weight: 500;
+      width: 100%;
+      margin-top: 10px;
+      transition: background 0.2s ease;
     }
-    .card button:hover {
+    button:hover {
       background: #005bb5;
     }
     .output {
-      margin-top: 15px;
-      padding: 15px;
-      border-radius: 10px;
+      margin-top: 20px;
+      padding: 18px;
+      border-radius: 12px;
       background: #f0f0f5;
       font-size: 15px;
       white-space: pre-wrap;
+      min-height: 60px;
+      transition: all 0.3s ease;
+    }
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border: 3px solid #ccc;
+      border-top: 3px solid #0071e3;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 15px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
 <body>
   <h1>Dialogue Generator</h1>
 
-  <!-- Synonyms -->
   <div class="card">
-    <h2>Synonyms</h2>
-    <label>Word 1:</label>
-    <input type="text" id="synWord1">
-    <label>Word 2:</label>
-    <input type="text" id="synWord2">
-    <button onclick="generateDialogue('synonyms')">Generate Dialogue</button>
-    <div id="synOutput" class="output"></div>
+    <label for="typeSelect">Select Type</label>
+    <select id="typeSelect" onchange="updateForm()">
+      <option value="">-- Choose an option --</option>
+      <option value="1">Synonyms</option>
+      <option value="2">Opposites</option>
+      <option value="3">Definitions</option>
+      <option value="4">Themes</option>
+      <option value="5">Grammar</option>
+    </select>
+
+    <div id="inputFields"></div>
+
+    <button onclick="generateDialogue()">Generate Dialogue</button>
+
+    <div id="output" class="output"></div>
   </div>
 
-  <!-- Opposites -->
-  <div class="card">
-    <h2>Opposites</h2>
-    <label>Word 1:</label>
-    <input type="text" id="oppWord1">
-    <label>Word 2:</label>
-    <input type="text" id="oppWord2">
-    <button onclick="generateDialogue('opposites')">Generate Dialogue</button>
-    <div id="oppOutput" class="output"></div>
-  </div>
+  <script>
+    const API_URL = "https://dialogue-generator-pcvy.onrender.com/api/generate";
 
-  <!-- Definitions -->
-  <div class="card">
-    <h2>Definitions</h2>
-    <label>Word:</label>
-    <input type="text" id="defWord">
-    <label>Definition:</label>
-    <input type="text" id="defDefinition">
-    <button onclick="generateDialogue('definitions')">Generate Dialogue</button>
-    <div id="defOutput" class="output"></div>
-  </div>
+    function updateForm() {
+      const type = document.getElementById("typeSelect").value;
+      const fields = document.getElementById("inputFields");
+      fields.innerHTML = "";
 
-  <!-- Themes -->
-  <div class="card">
-    <h2>Themes</h2>
-    <label>Theme:</label>
-    <input type="text" id="themeName">
-    <label>Target Word:</label>
-    <input type="text" id="themeWord">
-    <button onclick="generateDialogue('themes')">Generate Dialogue</button>
-    <div id="themeOutput" class="output"></div>
-  </div>
-
-<script>
-  const API_URL = "https://dialogue-generator-pcvy.onrender.com/api/generate";
-
-  async function generateDialogue(type) {
-    let payload = {};
-
-    if (type === "synonyms") {
-      payload = {
-        promptType: "1",
-        word1: document.getElementById("synWord1").value,
-        word2: document.getElementById("synWord2").value
-      };
-    } 
-    else if (type === "opposites") {
-      payload = {
-        promptType: "2",
-        word1: document.getElementById("oppWord1").value,
-        word2: document.getElementById("oppWord2").value
-      };
-    } 
-    else if (type === "definitions") {
-      payload = {
-        promptType: "3",
-        word1: document.getElementById("defWord").value,
-        definition: document.getElementById("defDefinition").value
-      };
-    } 
-    else if (type === "themes") {
-      payload = {
-        promptType: "4",
-        word1: document.getElementById("themeName").value,
-        word2: document.getElementById("themeWord").value
-      };
+      if (type === "1" || type === "2") {
+        fields.innerHTML = `
+          <label>Word 1</label>
+          <input type="text" id="word1" placeholder="Enter first word">
+          <label>Word 2</label>
+          <input type="text" id="word2" placeholder="Enter second word">
+        `;
+      } else if (type === "3") {
+        fields.innerHTML = `
+          <label>Word</label>
+          <input type="text" id="word1" placeholder="Enter word">
+          <label>Definition</label>
+          <input type="text" id="definition" placeholder="Enter definition">
+        `;
+      } else if (type === "4") {
+        fields.innerHTML = `
+          <label>Theme</label>
+          <input type="text" id="word1" placeholder="Enter theme name">
+          <label>Target Word</label>
+          <input type="text" id="word2" placeholder="Enter target word">
+        `;
+      } else if (type === "5") {
+        fields.innerHTML = `
+          <label>Grammar Rule</label>
+          <input type="text" id="grammar" placeholder="Describe grammar rule">
+        `;
+      }
     }
 
-    try {
-      const response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
+    async function generateDialogue() {
+      const type = document.getElementById("typeSelect").value;
+      const output = document.getElementById("output");
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Server returned ${response.status}: ${errorText}`);
+      if (!type) {
+        output.textContent = "❌ Please select a type first.";
+        return;
       }
 
-      const data = await response.json();
-      const text = data.output || "❌ No response from server";
+      const payload = {
+        promptType: type,
+        word1: document.getElementById("word1")?.value || "",
+        word2: document.getElementById("word2")?.value || "",
+        definition: document.getElementById("definition")?.value || "",
+        grammar: document.getElementById("grammar")?.value || ""
+      };
 
-      if (type === "synonyms") document.getElementById("synOutput").textContent = text;
-      if (type === "opposites") document.getElementById("oppOutput").textContent = text;
-      if (type === "definitions") document.getElementById("defOutput").textContent = text;
-      if (type === "themes") document.getElementById("themeOutput").textContent = text;
+      output.innerHTML = '<div class="spinner"></div><div style="text-align:center; font-size:14px; color:#555;">Generating dialogue...</div>';
 
-    } catch (err) {
-      const msg = "❌ Error: " + err.message;
-      if (type === "synonyms") document.getElementById("synOutput").textContent = msg;
-      if (type === "opposites") document.getElementById("oppOutput").textContent = msg;
-      if (type === "definitions") document.getElementById("defOutput").textContent = msg;
-      if (type === "themes") document.getElementById("themeOutput").textContent = msg;
+      try {
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`Server ${res.status}: ${text}`);
+        }
+
+        const data = await res.json();
+        output.textContent = data.output || "❌ No response from server.";
+      } catch (err) {
+        output.textContent = "❌ Error: " + err.message;
+      }
     }
-  }
-</script>
+  </script>
 </body>
 </html>
-
