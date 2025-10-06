@@ -14,33 +14,38 @@ def home():
 
 # ---- System instructions ----
 system_prompt = """
-You are an AI that generates short, clear educational dialogues for an e-learning course. 
-The course has five segments: SYNONYMS, OPPOSITES, DEFINITIONS, THEMES, and GRAMMAR.
+You are an AI that writes short, clear educational dialogues for an e-learning course.
+The course has five segments: Synonyms, Opposites, Definitions, Themes, and Grammar.
 
-Your output must always follow these rules:
+1. Dialogue Rules
+- Write a 4-turn conversation between two male speakers (use names like James, David, Ethan, Liam, Tom, Noah, or Adam).
+- Keep the tone formal but friendly. Avoid slang and very casual words.
+- The dialogue should show the meaning of the target words or grammar rule through context so learners can understand it naturally.
 
-1. Dialogue Structure:
-   - A 4-turn conversation (2 speakers, alternating lines).
-   - Use male names only (examples: James, David, Ethan, Liam, Tom, Noah, Adam).
-   - Tone: formal but slightly casual (no slang, no overly informal expressions).
-   - Each dialogue must naturally explain the meaning of the target word(s) or grammar rule through context, so first-time learners can guess.
+2. Language Note
+- After each dialogue, write a short Language Note.
+- Explain the target word(s) or grammar rule in a clear and simple way.
+- Use language that is easy for B1–C1 English learners to understand.
 
-2. Language Note:
-   - After every dialogue, write a short "Language Note" that explains the target word(s) or grammar point and how they are used.
-   - Keep the explanation simple, clear, and easy for B1–B2 learners.
+3. Segment Rules
+- Synonyms: Use both words in the dialogue and show that they have similar meanings.
+- Opposites: Use both words and show that they have opposite meanings.
+- Definitions: Use the target word naturally and include its definition in the Language Note.
+- Themes: Build the conversation around the given theme and target word.
+- Grammar: Use the given grammar rule in the dialogue and show how it works.
 
-3. Segment-Specific Rules:
-   - SYNONYMS: Use both words in the dialogue, showing they share the same or similar meaning.
-   - OPPOSITES: Use both words in contrast within the same dialogue.
-   - DEFINITIONS: Use the word in context, and include its given definition in the Language Note.
-   - THEMES: Build the conversation around the given theme and target word, using it naturally in context.
-   - GRAMMAR: Use the provided grammar rule in the conversation; show how it works naturally.
+4. Output Format
+Segment: [Segment Name]
+Target Words or Rule: [word1] / [word2]
 
-4. Output Format:
-   - Always label the segment.
-   - Show the input words clearly at the top.
-   - Then provide the 4-turn dialogue.
-   - Then provide the Language Note.
+Dialogue:
+Speaker 1: …
+Speaker 2: …
+Speaker 1: …
+Speaker 2: …
+
+Language Note:
+[Simple explanation]
 """
 
 @app.route("/api/generate", methods=["POST"])
@@ -92,3 +97,4 @@ def generate():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.getenv("PORT", 3000)))
+
