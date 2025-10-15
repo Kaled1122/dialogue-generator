@@ -10,6 +10,7 @@
       background-color: #f5f5f7;
       margin: 0;
       padding: 40px;
+      padding-bottom: 60px; /* 👈 Prevents footer overlap */
       color: #1d1d1f;
     }
     h1 {
@@ -87,6 +88,21 @@
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
+    }
+
+    /* ✅ Footer styling */
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      text-align: center;
+      background: #f2f2f2;
+      padding: 8px;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      color: #555;
+      box-shadow: 0 -1px 5px rgba(0,0,0,0.1);
     }
   </style>
 </head>
@@ -186,9 +202,9 @@
       }
     }
   </script>
-  <footer style="position:fixed; bottom:0; left:0; width:100%; text-align:center; background:#f2f2f2; padding:8px; font-family:Arial, sans-serif; font-size:14px; color:#555; box-shadow:0 -1px 5px rgba(0,0,0,0.1);">
-  Made by Kaled Alenezi
-</footer>
+
+  <footer>
+    Made by Kaled Alenezi
+  </footer>
 </body>
 </html>
-
